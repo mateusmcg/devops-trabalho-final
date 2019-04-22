@@ -8,17 +8,22 @@ variables:
 
 jobs:
 - job: Install SonarCloud
+  pool: ''
   steps:
   - script: dotnet tool install --global dotnet-sonarscanner
 - job: Init SonarCloud Scan
+  pool: ''
   steps:
   - script: $HOME/.dotnet/tools/dotnet-sonarscanner begin /k:"$(SONAR_PROJECT_KEY)" /o:"$(SONAR_ORGANIZATION)" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$(SONAR_TOKEN)"
 - job: Run Build
+  pool: ''
   steps:
   - script: dotnet build --configuration $(buildConfiguration)
 - job: Run Unit Tests (xUnit)
+  pool: ''
   steps:
   - script: dotnet test --configuration $(buildConfiguration) --no-build
 - job: Finish SonarCloud Scan
+  pool: ''
   steps:
   - script: $HOME/.dotnet/tools/dotnet-sonarscanner end /d:sonar.login="$(SONAR_TOKEN)"
