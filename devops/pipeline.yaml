@@ -1,21 +1,15 @@
-pool:
-  vmImage: 'Ubuntu 16.04'
-
 pr: none 
   
 variables:
   buildConfiguration: 'Release'
 
-steps:
-# Install SonarScanner
-- script: |
-    dotnet tool install --global dotnet-sonarscanner
-# Begin SonarScanner
-- script: |
-    $HOME/.dotnet/tools/dotnet-sonarscanner begin /k:"$(SONAR_PROJECT_KEY)" /o:"$(SONAR_ORGANIZATION)" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$(SONAR_TOKEN)"
-- script: |
-    dotnet build --configuration $(buildConfiguration)
-    dotnet test --configuration $(buildConfiguration) --no-build
-# End SonarScanner
-- script: |
-    $HOME/.dotnet/tools/dotnet-sonarscanner end /d:sonar.login="$(SONAR_TOKEN)"
+jobs:
+- job: Build_Test_Sonar
+  pool:
+    vmImage: 'Ubuntu 16.04'
+  steps:
+  - script: dotnet tool install --global dotnet-sonarscanner
+  - script: $HOME/.dotnet/tools/dotnet-sonarscanner begin /k:"$(SONAR_PROJECT_KEY)" /o:"$(SONAR_ORGANIZATION)" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="$(SONAR_TOKEN)"
+  - script: dotnet build --configuration $(buildConfiguration)
+  - script: dotnet test --configuration $(buildConfiguration) --no-build
+  - script: $HOME/.dotnet/tools/dotnet-sonarscanner end /d:sonar.login="$(SONAR_TOKEN)"
